@@ -1,0 +1,6 @@
+env: "local"
+storage_uri: "postgres://postgres:6,62607004@localhost:5434/url_shortener?sslmode=disable"
+http_server:
+  address: "localhost:8080"
+  timeout: 4s
+  idle_timeout: 60s
