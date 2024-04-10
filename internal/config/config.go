@@ -11,7 +11,7 @@ import (
 
 type Config struct {
 	Env        string `yaml:"env" env:"ENV" env-default:"local"`
-	StorageURI string `yaml:"storage_uri" env-default:"postgres://postgres:postgres@localhost:5432/url_shortener?sslmode=disable"`
+	StorageURL string `yaml:"storage_url" env-default:"postgres://postgres:postgres@localhost:5432/url_shortener?sslmode=disable"`
 	HTTPServer `yaml:"http:server"`
 }
 
