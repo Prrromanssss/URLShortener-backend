@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Prrromanssss/URLShortener/internal/config"
+	"github.com/Prrromanssss/URLShortener/internal/lib/logger/handlers/slogpretty"
 	"github.com/Prrromanssss/URLShortener/internal/lib/logger/sl"
 	"github.com/Prrromanssss/URLShortener/internal/storage/postgres"
 	"github.com/go-chi/chi/v5"
@@ -46,11 +47,7 @@ func setupLogger(env string) *slog.Logger {
 	var log *slog.Logger
 	switch env {
 	case envLocal:
-		log = slog.New(
-			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-				Level: slog.LevelDebug,
-			}),
-		)
+		log = setupPrettySlog()
 	case envDev:
 		log = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
@@ -65,5 +62,16 @@ func setupLogger(env string) *slog.Logger {
 		)
 	}
 	return log
+}
 
+func setupPrettySlog() *slog.Logger {
+	opts := slogpretty.PrettyHandlerOptions{
+		SlogOpts: &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	}
+
+	handler := opts.NewPrettyHandler(os.Stdout)
+
+	return slog.New(handler)
 }
