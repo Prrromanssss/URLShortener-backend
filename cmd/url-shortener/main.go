@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
+	"github.com/Prrromanssss/URLShortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/Prrromanssss/URLShortener/internal/http-server/middleware/logger"
 )
 
@@ -41,6 +42,10 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
+
+	router.Post("/url", save.New(log, storage))
+
+	log.Info("starting server", slog.String("address", cfg.Address))
 }
 
 func setupLogger(env string) *slog.Logger {
