@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Prrromanssss/URLShortener/internal/storage"
@@ -26,7 +27,7 @@ func (s *Storage) SaveURL(urlToSave, alias string) (int64, error) {
 
 	stmt, err := s.db.Prepare("INSERT INTO url (url, alias) VALUES ($1, $2) RETURNING id;")
 	if err != nil {
-		return 0, fmt.Errorf("%s: %w", op, err)
+		return 0, fmt.Errorf("%s: prepare statement: %w", op, err)
 	}
 
 	var id int64
@@ -40,8 +41,28 @@ func (s *Storage) SaveURL(urlToSave, alias string) (int64, error) {
 		if pgErr.Code == "23505" {
 			return 0, fmt.Errorf("%s: %w", op, storage.ErrURLExists)
 		}
-		return 0, fmt.Errorf("%s: %w", op, err)
+		return 0, fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 
 	return id, nil
+}
+
+func (s *Storage) GetURL(alias string) (string, error) {
+	const op = "storage.postgres.GetURL"
+
+	stmt, err := s.db.Prepare("GET url FROM url WHERE alias = $1")
+	if err != nil {
+		return "", fmt.Errorf("%s: prepare statement: %w", op, err)
+	}
+
+	var resUrl string
+	err = stmt.QueryRow(alias).Scan(&resUrl)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", fmt.Errorf("%s: %w", op, storage.ErrURLNotFound)
+		}
+
+		return "", fmt.Errorf("%s: execute statement: %w", op, err)
+	}
+	return resUrl, nil
 }
