@@ -7,6 +7,10 @@ import (
 	"github.com/Prrromanssss/URLShortener/internal/config"
 	"github.com/Prrromanssss/URLShortener/internal/lib/logger/sl"
 	"github.com/Prrromanssss/URLShortener/internal/storage/postgres"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+
+	mwLogger "github.com/Prrromanssss/URLShortener/internal/http-server/middleware/logger"
 )
 
 const (
@@ -29,6 +33,13 @@ func main() {
 	}
 
 	_ = storage
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(mwLogger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 }
 
 func setupLogger(env string) *slog.Logger {
