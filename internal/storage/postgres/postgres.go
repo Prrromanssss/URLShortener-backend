@@ -69,9 +69,9 @@ func (s *Storage) GetURL(alias string) (string, error) {
 }
 
 func (s *Storage) DeleteURL(alias string) error {
-	const op = "storage.postgres.DelteURL"
+	const op = "storage.postgres.DeleteURL"
 
-	stmt, err := s.db.Prepare("DELETE url FROM url WHERE alias = $1")
+	stmt, err := s.db.Prepare("DELETE FROM url WHERE alias = $1")
 	if err != nil {
 		return fmt.Errorf("%s: prepare statement: %w", op, err)
 	}

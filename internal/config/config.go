@@ -12,13 +12,15 @@ import (
 type Config struct {
 	Env        string `yaml:"env" env:"ENV" env-default:"local"`
 	StorageURL string `yaml:"storage_url" env-default:"postgres://postgres:postgres@localhost:5432/url_shortener?sslmode=disable"`
-	HTTPServer `yaml:"http:server"`
+	HTTPServer `yaml:"http_server"`
 }
 
 type HTTPServer struct {
 	Address     string        `yaml:"address" env-default:"localhost:8080"`
 	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+	User        string        `yaml:"user" env-required:"true"`
+	Password    string        `yaml:"password" env-required:"true" env:"HTTP_SERVER_PASSWORD"`
 }
 
 func MustLoad() *Config {
@@ -39,6 +41,7 @@ func MustLoad() *Config {
 	var cfg Config
 
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
+
 		log.Fatalf("cannot read config: %s", err)
 	}
 
