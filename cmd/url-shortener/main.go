@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
+	"github.com/Prrromanssss/URLShortener/internal/http-server/handlers/redirect"
 	"github.com/Prrromanssss/URLShortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/Prrromanssss/URLShortener/internal/http-server/middleware/logger"
 )
@@ -26,7 +27,11 @@ func main() {
 	cfg := config.MustLoad()
 
 	log := setupLogger(cfg.Env)
-	log.Info("Start url-shortener", slog.String("env", cfg.Env))
+	log.Info(
+		"Start url-shortener",
+		slog.String("env", cfg.Env),
+		slog.String("version", "123"),
+	)
 	log.Debug("debug messages are enabled")
 
 	storage, err := postgres.New(cfg.StorageURL)
@@ -34,8 +39,6 @@ func main() {
 		log.Error("failed to init storage", sl.Err(err))
 		os.Exit(1)
 	}
-
-	_ = storage
 
 	router := chi.NewRouter()
 
@@ -45,6 +48,7 @@ func main() {
 	router.Use(middleware.URLFormat)
 
 	router.Post("/url", save.New(log, storage))
+	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
