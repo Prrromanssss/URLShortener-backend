@@ -13,6 +13,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/Prrromanssss/URLShortener/internal/http-server/handlers/redirect"
+	delUrl "github.com/Prrromanssss/URLShortener/internal/http-server/handlers/url/delete"
 	"github.com/Prrromanssss/URLShortener/internal/http-server/handlers/url/save"
 	mwLogger "github.com/Prrromanssss/URLShortener/internal/http-server/middleware/logger"
 )
@@ -49,6 +50,7 @@ func main() {
 
 	router.Post("/url", save.New(log, storage))
 	router.Get("/{alias}", redirect.New(log, storage))
+	router.Delete("/{alias}", delUrl.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
