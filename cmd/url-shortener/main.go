@@ -35,6 +35,18 @@ func main() {
 	)
 	log.Debug("debug messages are enabled")
 
+	// ssoClient, err := ssogrpc.New(
+	// 	context.Background(),
+	// 	log,
+	// 	cfg.Clients.SSO.Address,
+	// 	cfg.Clients.SSO.Timeout,
+	// 	cfg.Clients.SSO.RetriesCount,
+	// )
+	// if err != nil {
+	// 	log.Error("failed to init sso client", sl.Err(err))
+	// 	os.Exit(1)
+	// }
+
 	storage, err := postgres.New(cfg.StorageURL)
 	if err != nil {
 		log.Error("failed to init storage", sl.Err(err))

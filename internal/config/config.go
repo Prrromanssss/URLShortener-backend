@@ -13,6 +13,8 @@ type Config struct {
 	Env        string `yaml:"env" env:"ENV" env-default:"local"`
 	StorageURL string `yaml:"storage_url" env-default:"postgres://postgres:postgres@localhost:5432/url_shortener?sslmode=disable"`
 	HTTPServer `yaml:"http_server"`
+	Clients    ClientsConfig `yaml:"clients"`
+	AppSecret  string        `yaml:"app_secret" env-required:"true" env:"APP_SECRET"`
 }
 
 type HTTPServer struct {
@@ -21,6 +23,16 @@ type HTTPServer struct {
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
 	User        string        `yaml:"user" env-required:"true"`
 	Password    string        `yaml:"password" env-required:"true" env:"HTTP_SERVER_PASSWORD"`
+}
+
+type Client struct {
+	Address      string        `yaml:"address"`
+	Timeout      time.Duration `yaml:"timeout"`
+	RetriesCount int           `yaml:"retriesCount"`
+}
+
+type ClientsConfig struct {
+	SSO Client `yaml:"sso"`
 }
 
 func MustLoad() *Config {
